@@ -1,3 +1,3 @@
-# Source
+# Sources
 
-https://www.kaggle.com/itachi9604/disease-symptom-description-dataset
+https://www.kaggle.com/datasets/jonathanoheix/face-expression-recognition-dataset

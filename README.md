@@ -1,15 +1,15 @@
 <!-- Declare hyper links to DataSet, Autors GitHub, and the project GitHub -->
 
-[dataset]: https://www.kaggle.com/itachi9604/disease-symptom-description-dataset?select=dataset.csv
+[FaceDataset]: https://www.kaggle.com/datasets/jonathanoheix/face-expression-recognition-datasetdisease-symptom-description-dataset?select=dataset.csv
 [denis]: https://github.com/Denloob/Denloob
 [itai]: None
-[yoav]: None
+[yoav]: https://github.com/EazyIf/EazyIf
 
 # About the project
 
 #### Project theme:
 
-Disease clasification based on symptoms.
+<!-- TODO add this  -->
 
 #### Made by
 
@@ -17,7 +17,7 @@ Disease clasification based on symptoms.
 
 DM Den_loob#2209 using [discord](https://discord.com/) or using github to get in touch with the project.
 
-##### Thanks to itachi9604 for the [Dataset]
+##### Thanks to Jonathan Oheix for the [FaceDataset] and ____ for the [____]
 
 #### School:
 
@@ -33,12 +33,12 @@ _sorted by importance_
 
 - [x] Come up with an idea for a project
 - [x] Create a TODO list
-- [x] Find the DataSet
-- [x] Analyze the DataSet
-- [x] Make a prototype
-- [x] Test the prototype and extend the TODO list
-- [ ] Make so same symptom have same num value when encoded so it would be easier to mix the data
-- [ ] Mix the symptoms order when training and testing
-- [ ] Find more data and add it to the data set
-- [ ] Make the ui
+- [x] Find the DataSets
+- [x] Analyze the FaceDataset
+- [ ] Analyze the ____Dataset
+- [ ] Make the FaceDataset into a DataSet which can be used in the project
+- [ ] Make a prototype
+- [ ] Test the prototype and extend the TODO list
+- [ ] Make website's design
+- [ ] Add the AI to the website
 - [ ] Create a project description
