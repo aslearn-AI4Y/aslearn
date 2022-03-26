@@ -7,7 +7,7 @@
 
 # About the project
 
-#### Project theme:
+#### Project topic:
 
 <!-- TODO add this  -->
 
