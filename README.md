@@ -1,44 +1,26 @@
 <!-- Declare hyper links to DataSet, Autors GitHub, and the project GitHub -->
 
-[FaceDataset]: https://www.kaggle.com/datasets/jonathanoheix/face-expression-recognition-datasetdisease-symptom-description-dataset?select=dataset.csv
-[denis]: https://github.com/Denloob/Denloob
-[itai]: None
-[yoav]: https://github.com/EazyIf/EazyIf
+[asl alphabet dataset]: https://www.kaggle.com/datasets/grassknoted/asl-alphabet
+[denis]: https://github.com/Denloob
+[itai]: https://github.com/ItaiAviad
+[yoav]: https://github.com/EazyIf
+["eazychat"]: https://eazychat.onrender.com/
 
 # About the project
 
-#### Project topic:
-
-<!-- TODO add this  -->
+Unfortunately, not all people can hear or speak, and communication that is taking a very big part of our daily basis becomes a big problem.
+Aslkeys is a project which will help you learn the sign language with your friends with the help of artificial intelligence and interactive chat ["EazyChat"].
 
 #### Made by
 
-[Denis], [Itai] and [Yoav]
+[Denis], [Itai] and [Yoav] from Israel, The New Bosmat School
 
 DM Den_loob#2209 using [discord](https://discord.com/) or using github to get in touch with the project.
 
-##### Thanks to Jonathan Oheix for the [FaceDataset] and ____ for the [____]
+##### Thanks to Akash for the [ASL Alphabet DataSet]
 
-#### School:
+# Our Goals
 
-Israel, Haifa, Bosmat Hahadas (New Bosmat)
+As we already said, we are trying to make a sign language learning platform that will help you learn ASL with your friends. The AI will be able to recognize the letter through your camera in living and will add the letter to the input field. After you finish typing your message, you can send it to your friends, who can read it and respond to you.
 
-<!--
-TODO explain the project, tech it uses, our motivation and other things from https://docs.google.com/document/d/1EN6CdHNkYj2LZxchPIlIdCTKsZ0pjpfetIv9MitxnLI/edit
--->
-
-# TODO
-
-_sorted by importance_
-
-- [x] Come up with an idea for a project
-- [x] Create a TODO list
-- [x] Find the DataSets
-- [x] Analyze the FaceDataset
-- [ ] Analyze the ____Dataset
-- [ ] Make the FaceDataset into a DataSet which can be used in the project
-- [ ] Make a prototype
-- [ ] Test the prototype and extend the TODO list
-- [ ] Make website's design
-- [ ] Add the AI to the website
-- [ ] Create a project description
+The more people will use our project, the more we will be able to learn sign language and the barrier of communication between people will be removed.
