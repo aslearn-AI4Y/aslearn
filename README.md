@@ -24,3 +24,7 @@ DM Den_loob#2209 using [discord](https://discord.com/) or using github to get in
 As we mentioned before, we want to make a platform that will help you learn ASL with your friends to make the sign language more accessible for everyone. The AI is able to recognize the letter through your camera in live and will add the letter to the input field. After you finish typing your message, you can send it to your friends, who will read it and respond to you on the platform.
 
 The more people will use our project, the more people that will be able to use the sign language on a daily basis, which will make the barrier of communication between people disappear.
+
+<!-- image images/dataset_probe.png-->
+
+![dataset probe](images/dataset_probe.png)
