@@ -1,0 +1,22 @@
+<html>
+  <body>
+    <script>
+      var img = document.createElement("img");
+      img.src = "/video";
+      document.body.appendChild(img);
+    </script>
+
+    <script>
+      setInterval(async () => {
+        console.log("hello");
+        let p = document.getElementById("asl");
+        if (!p) {
+          p = document.createElement("p");
+          p.id = "asl";
+          document.body.appendChild(p);
+        }
+        p.innerHTML = await fetch("/clasify_hand").then((res) => res.text());
+      }, 10);
+    </script>
+  </body>
+</html>
