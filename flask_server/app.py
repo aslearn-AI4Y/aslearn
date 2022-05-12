@@ -1,10 +1,7 @@
 from flask import Flask, Response, render_template
-from turbo_flask import Turbo
-import threading
 import pickle, cv2
 import numpy as np
 from cvzone.HandTrackingModule import HandDetector
-import time
 
 AI_PATH = '../aslkeys.ai'
 
