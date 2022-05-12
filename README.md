@@ -2,7 +2,7 @@
 
 [asl alphabet dataset]: https://www.kaggle.com/datasets/grassknoted/asl-alphabet
 [denis]: https://github.com/Denloob
-[dababy???]: https://github.com/ItaiAviad
+[Itai]: https://github.com/ItaiAviad
 [yoav]: https://github.com/EazyIf
 ["eazychat"]: https://eazychat.onrender.com/
 
