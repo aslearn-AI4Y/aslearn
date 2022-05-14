@@ -1,18 +1,329 @@
 <html>
-  <body>
-    <img src="/video" />
+    <head>
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1" />
+        <script src="https://code.jquery.com/jquery-3.3.1.js"></script> <!-- jQuery -->
+        <script src="https://cdn.socket.io/4.5.0/socket.io.min.js" integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous"></script> <!-- Socket.io -->
+         <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300&family=Varela+Round&display=swap" rel="stylesheet">
 
-    <script>
-      setInterval(async () => {
-        console.log("hello");
-        let p = document.getElementById("asl");
-        if (!p) {
-          p = document.createElement("p");
-          p.id = "asl";
-          document.body.appendChild(p);
-        }
-        p.innerHTML = await fetch("/clasify_hand").then((res) => res.text());
-      }, 10);
-    </script>
-  </body>
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        
+        <title>aslkeys</title>
+        
+
+        <style>
+            :root {
+                --main-bg-color: #2f3136;
+                --blue-color: #404eed;
+                --custom-color: #FFBC42;
+                
+                --font-family: 'Varela Round', sans-serif;
+
+                --font-color: #f2f2f2;
+                --black-font-color: #2f2f2f;
+            }
+
+            * {
+                padding: 0;
+                margin: 0;
+                box-sizing: border-box;
+            }
+            *::-webkit-scrollbar {
+                width: 8px;
+            }
+            *::-webkit-scrollbar-track {
+                background: #2e3338;
+                border-radius: 20px;
+                /* box-shadow: -4px 0px 0 0 #36393f; */
+            }
+            *::-webkit-scrollbar-thumb {
+                background-color: #202225;
+                border-radius: 20px;
+                /* box-shadow: -4px 0px 0 0 #202225; */
+            }
+
+            body {
+                background-color: var(--main-bg-color);
+                color: var(--font-color);
+                font-family: var(--font-family);
+                user-select: none;
+            }
+
+            i, i:checked, i:focus, i:active {
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            main {
+                position: relative;
+                display: flex;
+                padding: 20px 0px 60px 0px;
+                flex-direction: column;
+                justify-content: center;
+                text-align: center;
+                align-items: center;
+                font-size: 1.2em;
+            }
+
+            main .info {
+                position: absolute;
+                z-index: 100;
+                display: none;
+                justify-content: center;
+                top: 75px;
+                left: 0;
+                background-color: var(--main-bg-color);
+                transition: .1s;
+            }
+
+            main .info img {
+                width: 95%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center;
+            }
+            
+            main header {
+                display: flex;
+                align-items: center;
+                /* justify-content: center; */
+                /* width: 100%; */
+            }
+            main header h1 {
+                font-size: 2.5em;
+                padding: 0px 20px 0px 0px;
+            }
+            main header i {
+                color: var(--blue-color);
+                font-size: 1.5em;
+                cursor: pointer;
+                border-radius: 50%;
+                transition: .1s;
+                padding: 6px 15px 6px 15px;
+            }
+            main header i:hover {
+                color: var(--font-color);
+                background-color: var(--blue-color);
+            }
+
+            .control-pannel {
+                margin-top: 20px;
+                width: 100%;
+                display: flex;
+                justify-content: space-evenly;
+            }
+            .control-pannel label {
+                display: flex;
+                flex-direction: column;
+            }
+
+            input[type='checkbox'] {
+                margin-top: 20px;
+                position: relative;
+                width: 80px;
+                height: 40px;
+                -webkit-appearance: none;
+                background-color: #c6c6c6;
+                outline: none;
+                border-radius: 20px;
+                box-shadow: inset 0 0 5px rgba(0, 0, 0, .2);
+                transition: .3s;
+                cursor: pointer;
+            }
+            input:checked[type='checkbox'] {
+                background-color: var(--blue-color);
+            }
+            input[type='checkbox']:before {
+                content: '';
+                position: absolute;
+                width: 40px;
+                height: 40px;
+                border-radius: 20px;
+                top: 0;
+                left: 0;
+                background-color: #fff;
+                transform: scale(1.1);
+                box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+                transition: .3s;
+            }
+            input:checked[type='checkbox']:before {
+                left: 40px;
+            }
+
+            .detect-toggle {
+                opacity: .6;
+                pointer-events: none;
+            }
+
+            
+            .aslkeys-data {
+                margin-top: 20px;
+                display: flex;
+                justify-content: center;
+                height: fit-content;
+                width: 100%;
+                flex-wrap: wrap;
+            }
+            .aslkeys-video {
+                width: 320px
+            }
+            .aslkeys-data .cavas {
+                width: 320px;
+                height: 240px;
+            }
+            .aslkeys-data .aslkeys-canvas2 {
+                display: none;
+            }
+            
+            .aslkeys-data .aslkeys-results {
+                margin-top: 20px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+                width: 100%;
+            }
+
+        </style>
+
+    </head>
+    <body>
+        <main>
+            <header>
+                <h1>aslkeys</h1>
+                <i class="fa fa-info" onclick="show_info()" ></i>
+            </header>
+
+            <div class="info" >
+                <img src='https://i.imgur.com/huT8zpO.png' alt="letters" />
+            </div>
+            
+            <div class="control-pannel" >
+                <label>
+                    Capture
+                    <input type="checkbox" name="" onchange='on_off_video()' />
+                </label>
+                <label>
+                    Detect
+                    <input type="checkbox" class='detect-toggle' name="" onchange='on_off_detect()' disabled/>
+                </label>
+            </div>
+    
+            
+            <div class="aslkeys-data">
+                <video autoplay="true" class="aslkeys-video" aria-disabled="true" ></video>
+                <canvas class="aslkeys-canvas cavas" ></canvas>
+                <canvas class="aslkeys-canvas2 cavas" ></canvas>
+                <div class="aslkeys-results" >
+                    <p class="result" ></p>
+                </div>
+            </div>
+        </main>
+
+        <script>
+            const video = document.querySelector(".aslkeys-video");
+            const canvas = document.querySelector(".aslkeys-canvas");
+            const canvas2 = document.querySelector(".aslkeys-canvas2");
+
+            const results_div= document.querySelector('.aslkeys-results');
+
+            var playListener;
+
+            var videoOn = false;
+            var detectOn = false;
+            var showInfo = false;
+
+            function show_info() {
+                showInfo ? showInfo = false : showInfo = true;
+                if (showInfo) {
+                    document.querySelector(".info").style.display = "flex";
+                } else {
+                    document.querySelector(".info").style.display = "none";
+                }
+            }
+
+            function on_off_detect() {
+                detectOn ? detectOn = false : detectOn = true;
+
+                canvas.style.filter = !detectOn ? 'blur(10px)' : 'blur(0px)';
+
+            }
+
+            function on_off_video() {
+                if (videoOn) {
+                    videoOn = false;
+                    $(".detect-toggle").attr("disabled", true);
+                    $(".detect-toggle").css({"opacity": '0.6', "pointer-events": 'none', 'cursor': 'not-allowed'});
+                }
+                else {
+                    videoOn = true;
+                    $(".detect-toggle").attr("disabled", false);
+                    $(".detect-toggle").css({"opacity": '1', "pointer-events": 'all', 'cursor': 'pointer'});
+                }
+                
+                video.style.filter = !videoOn ? 'blur(10px)' : 'blur(0px)';
+
+                if (videoOn) {
+                    video.play();
+                    
+                    var socket = io('http://localhost:5000');
+    
+                    socket.on('after draw hand', (data) => {
+                        const base64Img = 'data:image/png;base64,' + window.btoa(String.fromCharCode(...new Uint8Array(data['frame'])));
+    
+                        var img = new Image();
+                        img.onload = () => {
+                            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                        }
+                        img.src = base64Img;
+
+                        const results = document.querySelectorAll('.result');
+                        results.forEach(r => {
+                            r.remove();
+                        });
+                        const newResults = data['predection'].split('\n')
+                        for (let i = 0; i < newResults.length; i++) {
+                            var newResult = document.createElement('p');
+                            newResult.className = "result";
+                            newResult.innerHTML = newResults[i];
+                            results_div.appendChild(newResult);
+                        }
+                        // $('.result').html(data['predection']);
+                    });
+                    
+                    // Start the aslkeys-video
+                    if (navigator.mediaDevices.getUserMedia) {
+                        navigator.mediaDevices.getUserMedia({ video: true })
+                            .then(function (stream) {
+                                video.srcObject = stream;
+                            })
+                            .catch(function (err0r) {
+                                console.log("Something went wrong!");
+                            });
+                    }
+                    
+                    playListener = function () {
+                        var $this = video; // cache
+                        (function loop() {
+                            if (!$this.paused && !$this.ended) {
+                                canvas2.getContext('2d').drawImage($this, 0, 0, canvas2.width, canvas2.height);
+                                let image_data_url = canvas2.toDataURL('image/jpeg');
+                                if (detectOn) socket.emit('draw hand', {'frame': image_data_url});
+                                setTimeout(loop, 1000 / 5); // drawing at x fps
+                            }
+                        })();
+                    }
+                    video.addEventListener('play', playListener)
+                }
+                else {
+                    video.pause();
+                    // canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+                    // canvas2.getContext('2d').clearRect(0, 0, canvas2.width, canvas2.height);
+                }
+            }
+
+        </script>
+
+    </body>
 </html>
