@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 from cvzone.HandTrackingModule import HandDetector
 import base64
+import os
 
 from PIL import Image
 from io import BytesIO
@@ -16,7 +17,7 @@ CORS(app, resources={r"*": {"origins": "*"}})
 socketio = SocketIO(app=app, cors_allowed_origins='*')
 
 
-AI_PATH = '../aslkeys.ai'
+AI_PATH = os.path.dirname(__file__) + 'aslkeys.ai'
 
 def load_ai():
     with open(AI_PATH, "rb") as f:
