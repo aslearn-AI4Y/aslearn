@@ -1,4 +1,4 @@
-from flask import Flask, Response, render_template
+from flask import Flask, render_template, request
 import pickle
 import cv2
 import numpy as np
@@ -8,16 +8,13 @@ import os
 
 from PIL import Image
 from io import BytesIO
-from flask_socketio import SocketIO, emit
 from flask_cors import CORS
-
 
 app = Flask(__name__)
 CORS(app, resources={r"*": {"origins": "*"}})
-socketio = SocketIO(app=app, cors_allowed_origins='*')
 
 
-AI_PATH = os.path.dirname(__file__) + 'aslkeys.ai'
+AI_PATH = os.path.dirname(__file__) + '/aslkeys.ai'
 
 def load_ai():
     with open(AI_PATH, "rb") as f:
@@ -30,16 +27,16 @@ labels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 
 detector = HandDetector(detectionCon=0.8, maxHands=1)  # Create a hand detector
 
 
-@socketio.on('draw hand')
-def draw_hand(data):
-    decodedBase64 = base64.b64decode(data['frame'].split(',')[1]) # decode the base64 string
-
-    img = Image.open(BytesIO(decodedBase64)) # PIL image
-    pixels = np.asarray(img, dtype='uint8')
-    frame = pixels[:, :, ::-1].copy() # convert to opencv format
-    frame_copy = frame.copy()
-
+@app.route('/drawhand', methods=['POST'])
+def draw_hand():
     try:
+        decodedBase64 = base64.b64decode(request.json['frame'].split(',')[1]) # decode the base64 string
+
+        img = Image.open(BytesIO(decodedBase64)) # PIL image
+        pixels = np.asarray(img, dtype='uint8')
+        frame = pixels[:, :, ::-1].copy() # Convert to opencv format
+        frame_copy = frame.copy()
+
         hands = detector.findHands(frame, draw=False) # detect the hand
 
         if (hands and hands[0]):
@@ -50,11 +47,11 @@ def draw_hand(data):
 
         detector.findHands(frame_copy, draw=True)
 
-        retval, buffer = cv2.imencode('.png', frame_copy) # encode the frame to png
+        retval, buffer = cv2.imencode('.png', frame_copy) # encode the frame to png and get buffer
+        data = base64.b64encode(buffer).decode('utf-8') # encode the buffer to base64 and get string
 
         if not (hands and hands[0]):  # if no hands found
-            emit('after draw hand', {'predection': 'nothing: 100%', 'frame': buffer.tobytes()}) # send the frame back to the client
-            return 'nothing 100%'
+            return {'predection': 'nothing: 100%', 'frame': data}
 
         x, y, w, h = hands[0]['bbox']  # Get the bounding box
 
@@ -102,9 +99,8 @@ def draw_hand(data):
         precentageDict = {k: v for k, v in sorted(precentageDict.items(), key=lambda item: item[1], reverse=True)}  # Sort the dictionary by the percentage
         prediction = '\n'.join([key + ': ' + str(value) + '%' for key, value in precentageDict.items()])
 
-        emit('after draw hand', {'predection': prediction, 'frame': buffer.tobytes()}) # send the frame back to the client
+        return {'predection': prediction, 'frame': data} # send the frame back to the client
 
-        
     except cv2.error as e:
         print(e)
         return 'nothing 100%'
@@ -113,11 +109,11 @@ def draw_hand(data):
 @app.route('/', methods=['GET'])
 def index() -> str:
     """Homepage of the application
-
     Returns:
         str: HTML page with the camera stream and asl classification result
     """
     return render_template('index.html')
 
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
