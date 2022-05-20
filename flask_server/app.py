@@ -27,6 +27,19 @@ labels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 
 detector = HandDetector(detectionCon=0.8, maxHands=1)  # Create a hand detector
 
 
+@app.route('/logo.ico', methods=['GET'])
+def get_favicon():
+    return app.send_static_file('favicon.png')
+
+@app.route('/', methods=['GET'])
+def index() -> str:
+    """Homepage of the application
+    Returns:
+        str: HTML page with the camera stream and asl classification result
+    """
+    return render_template('index.html')
+
+
 @app.route('/drawhand', methods=['POST'])
 def draw_hand():
     try:
@@ -105,15 +118,5 @@ def draw_hand():
         print(e)
         return 'nothing 100%'
 
-
-@app.route('/', methods=['GET'])
-def index() -> str:
-    """Homepage of the application
-    Returns:
-        str: HTML page with the camera stream and asl classification result
-    """
-    return render_template('index.html')
-
-
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port='80')

@@ -1,8 +1,9 @@
 <html>
     <head>
+        <link rel="shortcut icon" type="image/png" href="./../static/favicon.png"/>
         <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1" />
         <script src="https://code.jquery.com/jquery-3.3.1.js"></script> <!-- jQuery -->
-        <script src="https://cdn.socket.io/4.5.0/socket.io.min.js" integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous"></script> <!-- Socket.io -->
+        <!-- <script src="https://cdn.socket.io/4.5.0/socket.io.min.js" integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous"></script> Socket.io -->
          <!-- Google Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -92,9 +93,16 @@
                 /* justify-content: center; */
                 /* width: 100%; */
             }
+            main header img {
+                width: 40px;
+                height: 40px;
+                margin-right: 20px;
+                cursor: pointer;
+            }
             main header h1 {
                 font-size: 2.5em;
-                padding: 0px 20px 0px 0px;
+                margin-right: 20px;
+                cursor: pointer;
             }
             main header i {
                 color: var(--blue-color);
@@ -172,7 +180,7 @@
             }
             .aslkeys-data .cavas {
                 width: 320px;
-                height: 240px;
+                /* height: 240px; */
             }
             .aslkeys-data .aslkeys-canvas2 {
                 display: none;
@@ -192,7 +200,8 @@
     <body>
         <main>
             <header>
-                <h1>aslkeys</h1>
+                <img src='./../static/favicon.png' onclick="window.location.reload()" />
+                <h1 onclick="window.location.reload()" >aslkeys</h1>
                 <i class="fa fa-info" onclick="show_info()" ></i>
             </header>
 
@@ -202,12 +211,8 @@
 
             <div class="control-pannel" >
                 <label>
-                    Capture
+                    Off / On
                     <input type="checkbox" name="" onchange='on_off_video()' />
-                </label>
-                <label>
-                    Detect
-                    <input type="checkbox" class='detect-toggle' name="" onchange='on_off_detect()' disabled/>
                 </label>
             </div>
 
@@ -226,16 +231,20 @@
             const video = document.querySelector(".aslkeys-video");
             const canvas = document.querySelector(".aslkeys-canvas");
             const canvas2 = document.querySelector(".aslkeys-canvas2");
+            
+            video.poster = './../static/no_camera.png';
+            var no_camera_img = new Image();
+            no_camera_img.onload = () => {
+                canvas.getContext('2d').drawImage(no_camera_img, 0, 0, canvas.width, canvas.height);
+            }
+            no_camera_img.src = './../static/no_camera.png';
 
             const results_div= document.querySelector('.aslkeys-results');
 
             var playListener;
 
             var videoOn = false;
-            var detectOn = false;
             var showInfo = false;
-
-            // var socket;
 
             function show_info() {
                 showInfo ? showInfo = false : showInfo = true;
@@ -245,34 +254,30 @@
                     document.querySelector(".info").style.display = "none";
                 }
             }
-
-            function on_off_detect() {
-                detectOn ? detectOn = false : detectOn = true;
-
-                canvas.style.filter = !detectOn ? 'blur(5px)' : 'blur(0px)';
-            }
-
+            
             function on_off_video() {
                 if (videoOn) {
+                    video.removeEventListener('play', playListener)
                     videoOn = false;
                     $(".detect-toggle").attr("disabled", true);
                     $(".detect-toggle").css({"opacity": '0.6', "pointer-events": 'none', 'cursor': 'not-allowed'});
+
+                    // Stop the stream
+                    video.pause();
                 }
                 else {
+                    video.removeEventListener('play', playListener)
                     videoOn = true;
                     $(".detect-toggle").attr("disabled", false);
                     $(".detect-toggle").css({"opacity": '1', "pointer-events": 'all', 'cursor': 'pointer'});
-                }
-
-                video.style.filter = !videoOn ? 'blur(5px)' : 'blur(0px)';
-
-                if (videoOn) {
-                    video.play();
 
                     // Start the aslkeys-video stream
+                    video.play();
+
                     if (navigator.mediaDevices.getUserMedia) {
                         navigator.mediaDevices.getUserMedia({ video: true })
                             .then(function (stream) {
+                                if (!videoOn) return;
                                 video.srcObject = stream;
                             })
                             .catch(function (err0r) {
@@ -282,58 +287,58 @@
 
                     playListener = function () {
                         var $this = video; // cache
-                        (function loop() {
+                        
+                        (async function loop() {
                             if (!$this.paused && !$this.ended) {
                                 // Draw the video frame to the canvas and get the image data
                                 canvas2.getContext('2d').drawImage($this, 0, 0, canvas2.width, canvas2.height);
                                 let image_base64 = canvas2.toDataURL('image/jpeg');
 
-                                if (detectOn) {
-                                    // Send the image to the server and get the results
-                                    fetch('/drawhand', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json'
-                                        },
-                                        body: JSON.stringify({
-                                            frame: image_base64
-                                        })
+                                // Send the image to the server and get the results
+                                await fetch('/drawhand', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        frame: image_base64
                                     })
-                                    .then(res => res.json())
-                                    .then(data => {
-                                        
-                                        const base64Img = 'data:image/png;base64,' + data['frame']; // Build the base64 image
+                                })
+                                .then(res => res.json())
+                                .then(data => {
+                                    
+                                    const base64Img = 'data:image/png;base64,' + data['frame']; // Build the base64 image
 
-                                        // Create a new image and draw the base64 image on it
-                                        var img = new Image();
-                                        img.onload = () => {
-                                            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-                                        }
-                                        img.src = base64Img;
+                                    // Create a new image and draw the base64 image on it
+                                    var img = new Image();
+                                    img.onload = () => {
+                                        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                                    }
+                                    img.src = base64Img;
 
-                                        // Get all the old results, delete them, and create new ones
-                                        const results = document.querySelectorAll('.result');
-                                        results.forEach(r => {
-                                            r.remove();
-                                        });
-                                        const newResults = data['predection'].split('\n')
-                                        for (let i = 0; i < newResults.length; i++) {
-                                            var newResult = document.createElement('p');
-                                            newResult.className = "result";
-                                            newResult.innerHTML = newResults[i];
-                                            results_div.appendChild(newResult);
-                                        }
+                                    // Get all the old results, delete them, and create new ones
+                                    const results = document.querySelectorAll('.result');
+                                    results.forEach(r => {
+                                        r.remove();
                                     });
-                                }
-                                setTimeout(loop, 1000 / 5); // drawing at x fps
+                                    const newResults = data['predection'].split('\n')
+                                    for (let i = 0; i < newResults.length; i++) {
+                                        var newResult = document.createElement('p');
+                                        newResult.className = "result";
+                                        newResult.innerHTML = newResults[i];
+                                        results_div.appendChild(newResult);
+                                    }
+                                });
+
+                                setTimeout(loop, 1000 / 6); // Drawing at x fps
                             }
                         })();
                     }
                     video.addEventListener('play', playListener)
                 }
-                else {
-                    video.pause();
-                }
+                
+                video.style.filter = !videoOn ? 'blur(5px)' : 'blur(0px)';
+                canvas.style.filter = !videoOn ? 'blur(5px)' : 'blur(0px)';
             }
 
         </script>
