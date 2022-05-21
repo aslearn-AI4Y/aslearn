@@ -9,10 +9,11 @@ import os
 from PIL import Image
 from io import BytesIO
 from flask_cors import CORS
+from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
 CORS(app, resources={r"*": {"origins": "*"}})
-
+socketio = SocketIO(app)
 
 AI_PATH = os.path.dirname(__file__) + '/aslkeys.ai'
 
@@ -40,10 +41,10 @@ def index() -> str:
     return render_template('index.html')
 
 
-@app.route('/drawhand', methods=['POST'])
-def draw_hand():
+@socketio.on('drawhand')
+def draw_hand(data):
     try:
-        decodedBase64 = base64.b64decode(request.json['frame'].split(',')[1]) # decode the base64 string
+        decodedBase64 = base64.b64decode(data['frame'].split(',')[1]) # decode the base64 string
 
         img = Image.open(BytesIO(decodedBase64)) # PIL image
         pixels = np.asarray(img, dtype='uint8')
@@ -64,6 +65,7 @@ def draw_hand():
         data = base64.b64encode(buffer).decode('utf-8') # encode the buffer to base64 and get string
 
         if not (hands and hands[0]):  # if no hands found
+            emit('afterdrawhand', {'predection': 'nothing: 100%', 'frame': data})
             return {'predection': 'nothing: 100%', 'frame': data}
 
         x, y, w, h = hands[0]['bbox']  # Get the bounding box
@@ -112,11 +114,13 @@ def draw_hand():
         precentageDict = {k: v for k, v in sorted(precentageDict.items(), key=lambda item: item[1], reverse=True)}  # Sort the dictionary by the percentage
         prediction = '\n'.join([key + ': ' + str(value) + '%' for key, value in precentageDict.items()])
 
-        return {'predection': prediction, 'frame': data} # send the frame back to the client
+        emit('afterdrawhand', {'predection': prediction, 'frame': data})
+        # return {'predection': prediction, 'frame': data} # send the frame back to the client
 
     except cv2.error as e:
         print(e)
         return 'nothing 100%'
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port='80')
+    # app.run(host='0.0.0.0', port='80')
+    socketio.run(app, host='0.0.0.0', port='80')

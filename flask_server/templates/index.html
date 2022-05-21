@@ -3,7 +3,8 @@
         <link rel="shortcut icon" type="image/png" href="./../static/favicon.png"/>
         <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1" />
         <script src="https://code.jquery.com/jquery-3.3.1.js"></script> <!-- jQuery -->
-        <!-- <script src="https://cdn.socket.io/4.5.0/socket.io.min.js" integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous"></script> Socket.io -->
+        <!--- Socket.io --->
+        <script src="https://cdn.socket.io/4.5.0/socket.io.min.js" integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous"></script>
          <!-- Google Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -246,6 +247,8 @@
             var videoOn = false;
             var showInfo = false;
 
+            var nextFrame = true;
+
             function show_info() {
                 showInfo ? showInfo = false : showInfo = true;
                 if (showInfo) {
@@ -264,12 +267,42 @@
 
                     // Stop the stream
                     video.pause();
+
+                    nextFrame = true;
                 }
                 else {
                     video.removeEventListener('play', playListener)
                     videoOn = true;
                     $(".detect-toggle").attr("disabled", false);
                     $(".detect-toggle").css({"opacity": '1', "pointer-events": 'all', 'cursor': 'pointer'});
+
+                    var socket = io.connect();
+
+                    socket.on('afterdrawhand', (data) => {
+                        const base64Img = 'data:image/png;base64,' + data['frame']; // Build the base64 image
+
+                        // Create a new image and draw the base64 image on it
+                        var img = new Image();
+                        img.onload = () => {
+                            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                        }
+                        img.src = base64Img;
+
+                        // Get all the old results, delete them, and create new ones
+                        const results = document.querySelectorAll('.result');
+                        results.forEach(r => {
+                            r.remove();
+                        });
+                        const newResults = data['predection'].split('\n')
+                        for (let i = 0; i < newResults.length; i++) {
+                            var newResult = document.createElement('p');
+                            newResult.className = "result";
+                            newResult.innerHTML = newResults[i];
+                            results_div.appendChild(newResult);
+                        }
+
+                        nextFrame = true;
+                    });
 
                     // Start the aslkeys-video stream
                     video.play();
@@ -301,40 +334,23 @@
                                 let image_base64 = canvas2.toDataURL('image/jpeg');
 
                                 // Send the image to the server and get the results
-                                await fetch('/drawhand', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json'
-                                    },
-                                    body: JSON.stringify({
-                                        frame: image_base64
-                                    })
-                                })
-                                .then(res => res.json())
-                                .then(data => {
+                                // await fetch('/drawhand', {
+                                //     method: 'POST',
+                                //     headers: {
+                                //         'Content-Type': 'application/json'
+                                //     },
+                                //     body: JSON.stringify({
+                                //         frame: image_base64
+                                //     })
+                                // })
+                                // .then(res => res.json())
+                                // .then(data => {
                                     
-                                    const base64Img = 'data:image/png;base64,' + data['frame']; // Build the base64 image
+                                    
+                                // });
 
-                                    // Create a new image and draw the base64 image on it
-                                    var img = new Image();
-                                    img.onload = () => {
-                                        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-                                    }
-                                    img.src = base64Img;
-
-                                    // Get all the old results, delete them, and create new ones
-                                    const results = document.querySelectorAll('.result');
-                                    results.forEach(r => {
-                                        r.remove();
-                                    });
-                                    const newResults = data['predection'].split('\n')
-                                    for (let i = 0; i < newResults.length; i++) {
-                                        var newResult = document.createElement('p');
-                                        newResult.className = "result";
-                                        newResult.innerHTML = newResults[i];
-                                        results_div.appendChild(newResult);
-                                    }
-                                });
+                                if (nextFrame) socket.emit('drawhand', {frame: image_base64})
+                                nextFrame = false;
 
                                 setTimeout(loop, 1000 / 6); // Drawing at x fps
                             }
