@@ -2,7 +2,7 @@
 
 [asl alphabet dataset]: https://www.kaggle.com/datasets/grassknoted/asl-alphabet
 [denis]: https://github.com/Denloob
-[Itai]: https://github.com/ItaiAviad
+[itai]: https://github.com/ItaiAviad
 [yoav]: https://github.com/EazyIf
 ["eazychat"]: https://eazychat.onrender.com/
 
@@ -18,6 +18,21 @@ Aslkeys is a project which will help you learn the sign language with your frien
 DM Den_loob#2209 using [discord](https://discord.com/) or using github to get in touch with the project.
 
 ##### Thanks to Akash for the [ASL Alphabet DataSet]
+
+# Server Usage
+
+After cloning the project, installing docker and changing working directory to the project folder, you can run the server by running the following commands:
+
+```bash
+docker build -t aslkeys .
+docker run -p 80:80 -p 22:22 --name aslkeys -it aslkeys
+docker exec -it aslkeys /bin/bash
+nohup /usr/sbin/sshd -D & nohup python app.py &
+```
+
+Now you can access the aslkeys on http://localhost:80 and ssh to the server with `ssh root@localhost`.
+
+Change the password to your liking in the [Dockerfile](Dockerfile) and the port to your liking in the bash script from above.
 
 # Our Goals
 
