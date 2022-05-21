@@ -1,8 +1,13 @@
 @echo off
 
+cd server
+
+echo "Running bat for aslkeys installation is deprecated, please use dockerfile"
+
 echo "Installing python libs..."
-pip install flask flask_cors opencv-python numpy cvzone pillow mediapipe scikit-learn
+pip install -r requirements.txt
 
 echo "Running app.py"
-cd flask_server
 python app.py
+
+pause
