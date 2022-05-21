@@ -279,6 +279,12 @@
                             .then(function (stream) {
                                 if (!videoOn) return;
                                 video.srcObject = stream;
+                                setTimeout(() => {
+                                    canvas.width = video.videoWidth > 0 ? video.videoWidth/2 : canvas.width;
+                                    canvas.height = video.videoHeight > 0 ? video.videoHeight/2 : canvas.height;
+                                    canvas2.width = video.videoWidth > 0 ? video.videoWidth/2 : canvas2.width;
+                                    canvas2.height = video.videoHeight > 0 ? video.videoHeight/2 : canvas2.height;
+                                }, 1000)
                             })
                             .catch(function (err0r) {
                                 console.log("Something went wrong!");
