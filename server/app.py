@@ -14,7 +14,7 @@ app = Flask(__name__)
 CORS(app, resources={r"*": {"origins": "*"}})
 
 
-AI_PATH = os.path.dirname(__file__) + '/aslkeys.ai'
+AI_PATH = os.path.dirname(__file__) + '/aslearn.ai'
 
 def load_ai():
     with open(AI_PATH, "rb") as f:

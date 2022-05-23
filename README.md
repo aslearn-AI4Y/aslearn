@@ -9,7 +9,7 @@
 # About the project
 
 Unfortunately, not all people can hear or speak, and communication that is taking a very big part of our daily basis becomes a big problem.
-Aslkeys is a project which will help you learn the sign language with your friends with the help of artificial intelligence and interactive chat ["EazyChat"].
+aslearn is a project which will help you learn the sign language with your friends with the help of artificial intelligence and interactive chat ["EazyChat"].
 
 #### Made by
 
@@ -24,13 +24,13 @@ DM Den_loob#2209 using [discord](https://discord.com/) or using github to get in
 After cloning the project, installing docker and changing working directory to the project folder, you can run the server by running the following commands:
 
 ```bash
-docker build -t aslkeys .
-docker run -p 80:80 -p 22:22 --name aslkeys -it aslkeys
-docker exec -it aslkeys /bin/bash
+docker build -t aslearn .
+docker run -p 80:80 -p 22:22 --name aslearn -it aslearn
+docker exec -it aslearn /bin/bash
 nohup /usr/sbin/sshd -D & nohup python app.py &
 ```
 
-Now you can access the aslkeys on http://localhost:80 and ssh to the server with `ssh root@localhost`.
+Now you can access the aslearn on http://localhost:80 and ssh to the server with `ssh root@localhost`.
 
 Change the password to your liking in the [Dockerfile](Dockerfile) and the port to your liking in the bash script from above.
 
