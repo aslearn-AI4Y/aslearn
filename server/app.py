@@ -78,7 +78,7 @@ def draw_hand():
         if (h > w):  # if the height is greater than the width
             w = h  # Make the width the same as the height
 
-        hand_img = frame[y:y+h, x:x+w]  # Crop the hand out of the frame
+        # hand_img = frame[y:y+h, x:x+w] Crop the hand out of the frame
 
         insertData = hands[0]['lmList']  # Get the landmarks
 
