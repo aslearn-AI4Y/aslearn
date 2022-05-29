@@ -31,8 +31,9 @@ detector = HandDetector(detectionCon=0.8, maxHands=1)  # Create a hand detector
 def get_favicon():
     return app.send_static_file('favicon.png')
 
-@app.route('/', methods=['GET'])
-def index() -> str:
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>', methods=['GET'])
+def index(path) -> str:
     """Homepage of the application
     Returns:
         str: HTML page with the camera stream and asl classification result
