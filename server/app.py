@@ -14,7 +14,7 @@ app = Flask(__name__)
 CORS(app, resources={r"*": {"origins": "*"}})
 
 
-AI_PATH = os.path.dirname(__file__) + '/aslearn.ai'
+AI_PATH = os.path.dirname(__file__) + '/aslearn_cords.ai'
 
 def load_ai():
     with open(AI_PATH, "rb") as f:
@@ -25,7 +25,6 @@ KNN = load_ai()
 labels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'del', 'space', 'nothing']
 
 detector = HandDetector(detectionCon=0.8, maxHands=1)  # Create a hand detector
-
 
 @app.route('/logo.ico', methods=['GET'])
 def get_favicon():
@@ -40,6 +39,29 @@ def index(path) -> str:
     """
     return render_template('index.html')
 
+
+@app.route('/tfjs')
+def tf_js():
+    return render_template('tfjs.html')
+
+@app.route('/classify', methods=['POST'])
+def detect_letter():
+    try:
+        predict = KNN.predict_proba([request.json['lmList']])  # Predict the probability of each label
+
+        predict = [int(i*100) for i in predict[0]]  # Convert the probabilities to integers
+        precentageDict = {}
+        for i, percentage in enumerate(predict):  # For each percentage
+            if (percentage > 0.):
+                precentageDict[labels[i]] = int(percentage)  # Add the label and the percentage to the dictionary
+        precentageDict = {k: v for k, v in sorted(precentageDict.items(), key=lambda item: item[1], reverse=True)}  # Sort the dictionary by the percentage
+        prediction = '\n'.join([key + ': ' + str(value) + '%' for key, value in precentageDict.items()])
+
+        return {'predection': prediction} # send the frame back to the client
+    
+    except Exception as e:
+        print(e)
+        return {'predection': 'nothing: 100%'}
 
 @app.route('/drawhand', methods=['POST'])
 def draw_hand():

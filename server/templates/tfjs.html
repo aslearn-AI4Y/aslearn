@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+
+        <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+    </head>
+
+    <body>
+        <div class="container">
+            <video class="input_video" width="320px" height="240px" ></video>
+            <canvas class="output_canvas" width="320px" height="240px"></canvas>
+            <input type="button" value="play vid" onclick="playVideo()" ></canvas>
+        </div>
+
+        <script>
+            // let model;
+            // async function load_model() {
+            //     model = await tf.loadLayersModel('http://localhost/tfjs/model.json');
+            // }
+            // load_model();
+
+            const video = document.getElementsByClassName('input_video')[0];
+            const canvasElement = document.getElementsByClassName('output_canvas')[0];
+            const canvasCtx = canvasElement.getContext('2d');
+                
+            // var flipped = false;
+
+            async function onResults(results) {
+                canvasCtx.save();
+                canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+                canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+                if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                    console.log(results);
+                    var landmarksArr = [];
+                    // console.log(results.multiHandLandmarks);
+                    // if (results && results.multiHandedness && results.multiHandedness[0].label && results.multiHandedness[0].label === 'Right') {
+                    //     console.log("1");
+                    //     flipped ? null : canvasCtx.scale(-1, 1);
+                    //     flipped = true;
+                    //     canvasCtx.drawImage(results.image, -320, -240, canvasElement.width, canvasElement.height);
+                    //     await hands.send({image: canvasElement});
+                    // }
+                    // else if (results && results.multiHandedness && results.multiHandedness[0].label && results.multiHandedness[0].label === 'Left') {
+                    //     console.log("2");
+                    //     flipped = false;
+                    //     canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+                    // }
+                    
+                    for (const landmarks of results.multiHandLandmarks) {
+                        landmarks.forEach((landmark, i) => {
+                            landmarksArr.push(parseInt(landmark['x']*320));
+                            landmarksArr.push(parseInt(landmark['y']*240));
+                            landmarksArr.push(parseInt(landmark['z']*320));
+                        })
+                        drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: '#00FF00', lineWidth: 2});
+                        drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', lineWidth: 0, radius: 3});
+                        var x_vals = landmarks.map(landmark => landmark.x);
+                        var x_vals_sorted = landmarks.map(landmark => landmark.x).sort();
+                        var y_vals = landmarks.map(landmark => landmark.y);
+                        var y_vals_sorted = landmarks.map(landmark => landmark.y).sort();
+                        var z_vals = landmarks.map(landmark => landmark.z);
+                    }
+                    var xb = parseInt(x_vals_sorted[0]*320);
+                    var yb = parseInt(y_vals_sorted[0]*240);
+                    console.log(yb, y_vals_sorted)
+                    var width = parseInt(x_vals_sorted[x_vals_sorted.length-1]*320 - xb);
+                    var height = parseInt(y_vals_sorted[y_vals_sorted.length-1]*240 - yb);
+                    width += 40;
+                    height += 40;
+                    if (width > height) {
+                        height = width;  
+                        xb -= 20;
+                        yb -= width/2-40;
+                    } 
+                    else if (height > width) {
+                        width = height;
+                        xb -= height/2-40;
+                        yb -= 20;
+                    }
+                    canvasCtx.beginPath();
+                    canvasCtx.rect(xb, yb, width, height);
+                    canvasCtx.stroke();
+                    x_vals = x_vals.map(x => parseInt(x*320) - xb);
+                    y_vals = y_vals.map(y => parseInt(y*240) - yb);
+                    z_vals = z_vals.map(z => parseInt(z*320));
+                    var cords = [];
+                    for (let i = 0; i < 21; i++) {
+                        cords.push(x_vals[i]);
+                        cords.push(y_vals[i]);
+                        cords.push(z_vals[i]);
+                    }
+                    await fetch('/classify', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            lmList: cords 
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log(data);
+                    });
+                    // console.table(landmarksArr);
+                    // const prediction = model.predict(tf.cast(tf.tensor([landmarksArr], [1, 63]), 'int32'));
+                    // const predVal = prediction.dataSync();
+                    // console.log(prediction);
+                    // console.log(predVal);
+                }
+                canvasCtx.restore();
+            }
+            
+            const hands = new Hands({locateFile: (file) => {
+                return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+            }});
+            hands.setOptions({
+                maxNumHands: 1,
+                modelComplexity: 1,
+                minDetectionConfidence: 0.5,
+                minTrackingConfidence: 0.5
+            });
+            hands.onResults(onResults);
+                
+            function playVideo() {
+                navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    video.srcObject = stream;
+                    (async function loop() {
+                        await hands.send({image: video});
+
+                        setTimeout(loop, 1000 / 12); // Drawing at x fps
+                    })();
+                })
+                .catch(function (err0r) {
+                    console.log("Something went wrong!");
+                });
+
+                video.play();
+            }            
+
+        </script>
+            
+    </body>
+
+</html>
