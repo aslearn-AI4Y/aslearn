@@ -37,7 +37,7 @@ Change the password to your liking in the [Dockerfile](Dockerfile) and the port 
 
 As we mentioned before, we want to make a platform that helps you learn the sign language for free to make communication and the sign language more accessible for everyone. The AI is able to recognize the letter through your camera in live and will provide qualified and reliable feedback.
 
-The more people will use our project, the more people will be able to use the sign language on a daily basis, which will make the barrier of communication between people thinner and thinner until it disappears completely
+The more people will use our project, the more people will be able to use the sign language on a daily basis, which will make the barrier of communication between people thinner and thinner until it disappears completely.
 
 <!-- image images/dataset_probe.png-->
 
