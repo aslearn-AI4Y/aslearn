@@ -4,12 +4,11 @@
 [denis]: https://github.com/Denloob
 [itai]: https://github.com/ItaiAviad
 [yoav]: https://github.com/EazyIf
-["eazychat"]: https://eazychat.onrender.com/
 
 # About the project
 
 Unfortunately, not all people can hear or speak, and communication that is taking a very big part of our daily basis becomes a big problem.
-aslearn is a project which will help you learn the sign language with your friends with the help of artificial intelligence and interactive chat ["EazyChat"].
+Aslearn helps you learn the sign language for free using AI.
 
 #### Made by
 
@@ -36,9 +35,9 @@ Change the password to your liking in the [Dockerfile](Dockerfile) and the port 
 
 # Our Goals
 
-As we mentioned before, we want to make a platform that will help you learn ASL with your friends to make the sign language more accessible for everyone. The AI is able to recognize the letter through your camera in live and will add the letter to the input field. After you finish typing your message, you can send it to your friends, who will read it and respond to you on the platform.
+As we mentioned before, we want to make a platform that helps you learn the sign language for free to make communication and the sign language more accessible for everyone. The AI is able to recognize the letter through your camera in live and will provide qualified and reliable feedback.
 
-The more people will use our project, the more people that will be able to use the sign language on a daily basis, which will make the barrier of communication between people disappear.
+The more people will use our project, the more people will be able to use the sign language on a daily basis, which will make the barrier of communication between people thinner and thinner until it disappears completely
 
 <!-- image images/dataset_probe.png-->
 
