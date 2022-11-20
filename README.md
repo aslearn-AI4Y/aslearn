@@ -18,6 +18,13 @@ DM Den_loob#2209 using [discord](https://discord.com/) or using github to get in
 
 ##### Thanks to Akash for the [ASL Alphabet DataSet]
 
+# Demo
+#### Site Demo
+[aslearn.tk](https://aslearn.tk)
+
+#### Video Demo
+![aslearn tk-hey-reduced2MB](https://user-images.githubusercontent.com/79359036/202921627-caaed3e5-826f-43b9-b27a-03f52d6d22d3.gif)
+
 # Server Usage
 
 After cloning the project, installing docker and changing working directory to the project folder, you can run the server by running the following commands:
