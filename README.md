@@ -23,7 +23,7 @@ DM Den_loob#2209 using [discord](https://discord.com/) or using github to get in
 [aslearn.tk](https://aslearn.tk)
 
 #### Video Demo
-![aslearn tk-hey-reduced2MB](https://user-images.githubusercontent.com/79359036/202921627-caaed3e5-826f-43b9-b27a-03f52d6d22d3.gif)
+![aslearn demo](https://user-images.githubusercontent.com/83463243/202922672-4280c456-b4ee-4250-b9a1-d77b3ba0ad3c.gif)
 
 # Server Usage
 
