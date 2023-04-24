@@ -27,18 +27,15 @@ DM Den_loob#2209 using [discord](https://discord.com/) or using github to get in
 
 # Server Usage
 
-After cloning the project, installing docker and changing working directory to the project folder, you can run the server by running the following commands:
+After cloning the project and installing docker, you can run the server by
+running the following commands:
 
 ```bash
 docker build -t aslearn .
-docker run -p 80:80 -p 22:22 --name aslearn -it aslearn
-docker exec -it aslearn /bin/bash
-nohup /usr/sbin/sshd -D & nohup python app.py &
+docker run -p 80:80 --name aslearn -it aslearn
 ```
 
-Now you can access the aslearn on http://localhost:80 and ssh to the server with `ssh root@localhost`.
-
-Change the password to your liking in the [Dockerfile](Dockerfile) and the port to your liking in the bash script from above.
+Now you can access the aslearn website on http://localhost:80
 
 # Our Goals
 
