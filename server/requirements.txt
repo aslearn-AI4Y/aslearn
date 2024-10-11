@@ -1,5 +1,5 @@
 flask==2.3.2
-flask_cors==3.0.10
+flask_cors==4.0.2
 opencv-python==4.5.5.64
 numpy==1.22.0
 cvzone==1.5.6
